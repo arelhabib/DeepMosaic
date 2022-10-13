@@ -53,7 +53,7 @@ for videopath in videopaths:
             fps,endtime,height,width = ffmpeg.get_video_infos(videopath)
             for cut_point in range(1,int((endtime-opt.time)/opt.interval)):
                 util.clean_tempfiles(opt)
-                ffmpeg.video2image(videopath, opt.temp_dir+'/video2image/%05d.'+opt.tempimage_type,fps=1,
+                ffmpeg.video2image(opt.gpu_id, videopath, opt.temp_dir+'/video2image/%05d.'+opt.tempimage_type,fps=1,
                     start_time = util.second2stamp(cut_point*opt.interval),last_time = util.second2stamp(opt.time))
                 imagepaths = util.Traversal(opt.temp_dir+'/video2image')
                 imagepaths = sorted(imagepaths)
@@ -82,7 +82,7 @@ for videopath in videopaths:
             util.makedirs(maskdir)
 
             util.clean_tempfiles(opt)
-            ffmpeg.video2image(videopath, opt.temp_dir+'/video2image/%05d.'+opt.tempimage_type,
+            ffmpeg.video2image(opt.gpu_id, videopath, opt.temp_dir+'/video2image/%05d.'+opt.tempimage_type,
                 start_time = timestamp,last_time = util.second2stamp(opt.time))
             
             endtime = datetime.datetime.now()

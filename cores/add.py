@@ -124,7 +124,7 @@ def addmosaic_video(opt,netS):
     if not opt.no_preview:
         cv2.destroyAllWindows()
     print('Step:4/4 -- Convert images to video')
-    ffmpeg.image2video( fps,
+    ffmpeg.image2video( opt.gpu_id, fps,
                         opt.temp_dir+'/addmosaic_image/output_%06d.'+opt.tempimage_type,
                         opt.temp_dir+'/voice_tmp.mp3',
-                         os.path.join(opt.result_dir,os.path.splitext(os.path.basename(path))[0]+'_add.mp4'))
+                        os.path.join(opt.result_dir,os.path.splitext(os.path.basename(path))[0]+'_add.mp4'))

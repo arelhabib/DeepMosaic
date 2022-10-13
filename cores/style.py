@@ -44,7 +44,7 @@ def styletransfer_video(opt,netG):
         cv2.destroyAllWindows()
     suffix = os.path.basename(opt.model_path).replace('.pth','').replace('style_','')
     print('Step:4/4 -- Convert images to video')
-    ffmpeg.image2video( fps,
-                opt.temp_dir+'/style_transfer/output_%06d.'+opt.tempimage_type,
-                opt.temp_dir+'/voice_tmp.mp3',
-                 os.path.join(opt.result_dir,os.path.splitext(os.path.basename(path))[0]+'_'+suffix+'.mp4')) 
+    ffmpeg.image2video( opt.gpu_id, fps,
+                        opt.temp_dir+'/style_transfer/output_%06d.'+opt.tempimage_type,
+                        opt.temp_dir+'/voice_tmp.mp3',
+                        os.path.join(opt.result_dir,os.path.splitext(os.path.basename(path))[0]+'_'+suffix+'.mp4')) 

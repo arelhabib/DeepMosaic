@@ -31,8 +31,29 @@ def run(args,mode = 0):
         sout = p.stdout.readlines()
         return sout
 
-def video2image(videopath, imagepath, fps=0, start_time='00:00:00', last_time='00:00:00'):
-    args = ['ffmpeg']
+def hwaccel_chk(option):
+    #option 0 = decode
+    #option 1 = encode
+    args = ['ffmpeg', '-hide_banner',  ]
+    if option == 0:
+        args += ['-hwaccels']
+        out = run(args, mode=1)
+        if 'cuvid' in out:
+            return 'cuvid'
+        if 'cuda' in out:
+            return 'cuda'
+    if option == 1:
+        find = 'grep'
+        if os.name == 'nt':
+            find = 'findstr'
+        args += ['-encoders | ', find, ' nvenc']
+        out = run(args, mode=1)
+        return 'nvenc' in out
+
+def video2image(gpu_id, videopath, imagepath, fps=0, start_time='00:00:00', last_time='00:00:00'):
+    args = ['ffmpeg', '-hide_banner']
+    if gpu_id != '-1' and hwaccel_chk(0):
+        args += ['-hwaccel', hwaccel_chk(0)]
     if last_time != '00:00:00':
         args += ['-ss', start_time]
         args += ['-t', last_time]
@@ -43,22 +64,25 @@ def video2image(videopath, imagepath, fps=0, start_time='00:00:00', last_time='0
     run(args)
 
 def video2voice(videopath, voicepath, start_time='00:00:00', last_time='00:00:00'):
-    args = ['ffmpeg', '-i', '"'+videopath+'"','-async 1 -f mp3','-b:a 320k']
+    args = ['ffmpeg', '-hide_banner', '-i', '"'+videopath+'"','-async 1 -f mp3','-b:a 320k']
     if last_time != '00:00:00':
         args += ['-ss', start_time]
         args += ['-t', last_time]
     args += [voicepath]
     run(args)
 
-def image2video(fps,imagepath,voicepath,videopath):
-    os.system('ffmpeg -y -r '+str(fps)+' -i '+imagepath+' -vcodec libx264 '+os.path.split(voicepath)[0]+'/video_tmp.mp4')
+def image2video(gpu_id,fps,imagepath,voicepath,videopath):
+    codec = 'libx264'
+    if gpu_id != '-1' and hwaccel_chk(1):
+        codec = 'h264_nvenc'
+    os.system('ffmpeg -hide_banner -y -r '+str(fps)+' -i '+imagepath+' -vcodec '+codec+' '+os.path.split(voicepath)[0]+'/video_tmp.mp4')
     if os.path.exists(voicepath):
-        os.system('ffmpeg -i '+os.path.split(voicepath)[0]+'/video_tmp.mp4'+' -i "'+voicepath+'" -vcodec copy -acodec aac '+videopath)
+        os.system('ffmpeg -hide_banner -i '+os.path.split(voicepath)[0]+'/video_tmp.mp4'+' -i "'+voicepath+'" -vcodec copy -acodec aac '+videopath)
     else:
-        os.system('ffmpeg -i '+os.path.split(voicepath)[0]+'/video_tmp.mp4 '+videopath)
+        os.system('ffmpeg -hide_banner -i '+os.path.split(voicepath)[0]+'/video_tmp.mp4 '+videopath)
 
 def get_video_infos(videopath):
-    args =  ['ffprobe -v quiet -print_format json -show_format -show_streams', '-i', '"'+videopath+'"']
+    args =  ['ffprobe -hide_banner -v quiet -print_format json -show_format -show_streams', '-i', '"'+videopath+'"']
     out_string = run(args,mode=1)
     infos = json.loads(out_string)
     try:

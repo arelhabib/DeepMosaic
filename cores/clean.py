@@ -150,10 +150,10 @@ def cleanmosaic_video_byframe(opt,netG,netM):
     if not opt.no_preview:
         cv2.destroyAllWindows()
     print('Step:4/4 -- Convert images to video')
-    ffmpeg.image2video( fps,
-                opt.temp_dir+'/replace_mosaic/output_%06d.'+opt.tempimage_type,
-                opt.temp_dir+'/voice_tmp.mp3',
-                 os.path.join(opt.result_dir,os.path.splitext(os.path.basename(path))[0]+'_clean.mp4'))  
+    ffmpeg.image2video( opt.gpu_id, fps,
+                        opt.temp_dir+'/replace_mosaic/output_%06d.'+opt.tempimage_type,
+                        opt.temp_dir+'/voice_tmp.mp3',
+                        os.path.join(opt.result_dir,os.path.splitext(os.path.basename(path))[0]+'_clean.mp4'))
 
 def cleanmosaic_video_fusion(opt,netG,netM):
     path = opt.media_path
@@ -243,7 +243,7 @@ def cleanmosaic_video_fusion(opt,netG,netM):
     if not opt.no_preview:
         cv2.destroyAllWindows()
     print('Step:4/4 -- Convert images to video')
-    ffmpeg.image2video( fps,
-                opt.temp_dir+'/replace_mosaic/output_%06d.'+opt.tempimage_type,
-                opt.temp_dir+'/voice_tmp.mp3',
-                 os.path.join(opt.result_dir,os.path.splitext(os.path.basename(path))[0]+'_clean.mp4')) 
+    ffmpeg.image2video( opt.gpu_id, fps,
+                        opt.temp_dir+'/replace_mosaic/output_%06d.'+opt.tempimage_type,
+                        opt.temp_dir+'/voice_tmp.mp3',
+                        os.path.join(opt.result_dir,os.path.splitext(os.path.basename(path))[0]+'_clean.mp4'))
